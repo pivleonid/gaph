@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "glif_person.h"
+#include "genus_tree.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

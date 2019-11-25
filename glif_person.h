@@ -8,10 +8,13 @@
 class Glif_Person : public QObject, public QGraphicsItem
 {
     Q_OBJECT
-
+public:
     size_t      m_radius;
     QColor      m_color;
     int         m_id;
+    int         m_id_father;
+    int         m_id_brother;
+    int         m_id_son;
     QString     m_name;
     QString     m_nameFather;
     QString     m_born;
