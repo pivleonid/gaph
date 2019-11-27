@@ -33,6 +33,8 @@
 typedef QList<Glif_Person*> vecGliph;
 class genus_tree
 {
+
+public:
     vecGliph v_gP;
     QVector<int> all_id;
 
@@ -41,7 +43,23 @@ class genus_tree
        v_gP.append(gp);
        all_id.append(gp->m_id);
     }
-
+    Glif_Person* getPerson(int id)
+    {
+        for( auto person : v_gP)
+        {
+            if ( person->m_id == id )
+                return person;
+        }
+    }
+    bool foundId(int id)
+    {
+        for(auto var : v_gP)
+        {
+            if( var->m_id == id )
+                return true;
+        }
+        return  false;
+    }
 
 };
 

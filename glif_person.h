@@ -19,17 +19,23 @@ public:
     QString      m_nameFather;
     QString      m_born;
     QString      m_die;
-    QStringList  m_event1; ///< События у персоны
-    QStringList  m_event2; ///< События у персоны
+    QStringList  m_event; ///< События у персоны
+    QString      m_notes; ///< События у персоны
 
 public:
-    explicit Glif_Person(size_t radius = 50, QColor color = Qt::GlobalColor::green,QObject *parent = nullptr,
-                         int id, QString name, QString name_father, QString born, QStringList  m_event1,
+    explicit Glif_Person(int id, QString name, QString name_father, QString born, QStringList  event,
                          QString die, int id_father, QVector<int> id_brother, QVector<int> id_son,
-                         QStringList  event2);
+                         QString  notes, size_t radius = 50, QColor color = Qt::GlobalColor::green,
+                         QObject *parent = nullptr);
     Glif_Person(const Glif_Person&);
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override;
+    void setEvent(QStringList ev)
+    {
+        m_event = ev;
+        if( ev.at(0) == "")
+                m_color = Qt::GlobalColor::green;
+    }
 
 signals:
 
