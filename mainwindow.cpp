@@ -140,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //отобразим на экране дерево
     auto node_tree = tree_list.at(0);
+    node_tree->reviewSons();
     QList<Glif_Person*> g_pers = node_tree->v_gP;
 
     scena->addItem(g_pers.at(0));
@@ -147,14 +148,27 @@ MainWindow::MainWindow(QWidget *parent)
     int y = 0;
     g_pers.at(0)->setPos(x, y);
     QVector<int> childrens;
+    QVector<int> childrens_temp;
     childrens = g_pers.at(0)->m_id_son;
-    while( childrens.isEmpty() == true)
+    while( childrens.isEmpty() == false)
     {
-        for( )
+        y += 150;
+        x = 0;
+        for( int i : childrens )
+        {
+            Glif_Person* son = node_tree->getPerson(i);
+            childrens_temp.append(son->m_id_son);
+            scena->addItem(son);
+            son->setPos(x, y);
+            childrens.pop_back();
+            x += 120;
+        }
+        childrens.append(childrens_temp);
+        childrens_temp.clear();
     }
 
-    int a;
-    a++;
+    int a = 0;
+     a++;
 
 }
 

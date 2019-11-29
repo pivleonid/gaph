@@ -50,6 +50,7 @@ public:
             if ( person->m_id == id )
                 return person;
         }
+        return nullptr;
     }
     bool foundId(int id)
     {
@@ -59,6 +60,31 @@ public:
                 return true;
         }
         return  false;
+    }
+
+    void reviewSons()
+    {
+        for( int i : all_id)
+        {
+            Glif_Person* son = getPerson( i );
+            for( int s : son->m_id_son)
+            {
+                if( s == 0)
+                    son->m_id_son.pop_back();
+            }
+            for( QString j : son->m_event)
+            {
+                if( j == 0)
+                    son->m_event.pop_back();
+            }
+            Glif_Person* father = getPerson(son->m_id_father);
+            if( father == nullptr)
+                continue;
+            //если таких номеров нет- добавляем
+            if( father->m_id_son.indexOf(son->m_id) < 0 )
+                father->m_id_son.append(son->m_id);
+
+        }
     }
 
 };
