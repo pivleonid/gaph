@@ -26,6 +26,7 @@ public:
 public slots:
     void slotCustomMenuRequested(QPoint pos);
     void editPers();
+    void redraw();
 
 private:
     Ui::MainWindow *ui;

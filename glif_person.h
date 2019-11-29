@@ -29,7 +29,8 @@ public:
     QString      m_die;
     QStringList  m_event; ///< События у персоны
     QString      m_notes; ///< События у персоны
-//    Edit_Person  m_ed_pers;
+
+
 
 public:
 
@@ -68,7 +69,10 @@ public:
          * */
 
         if( event->buttons() == Qt::MouseButton::LeftButton)
+        {
             this->setPos(mapToScene(event->pos()));
+            emit moveElement();
+        }
     }
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -96,6 +100,7 @@ public:
         }
     }
 signals:
+    void moveElement( void );
 
 public slots:
 };

@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent)
 //        x+=100;
 //        y+=100;
 
-
+    connect(g_pers, &Glif_Person::moveElement, this, &MainWindow::redraw);
     }
 
 
@@ -167,8 +167,10 @@ MainWindow::MainWindow(QWidget *parent)
                     x += 120;
                     //Установка линий
                     QLineF lineBetweenItems;
-                    lineBetweenItems.setP1(node_tree->getPerson(son->m_id_father)->scenePos());
-                    lineBetweenItems.setP2(son->scenePos());
+                    QPointF point(0, son->m_radius);
+
+                    lineBetweenItems.setP1(node_tree->getPerson(son->m_id_father)->scenePos() +  point);
+                    lineBetweenItems.setP2(son->scenePos() - point);
                     scena->addLine(lineBetweenItems);
                 }
                 childrens.append(childrens_temp);
@@ -182,6 +184,13 @@ MainWindow::MainWindow(QWidget *parent)
        ui->graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
        connect(ui->graphicsView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotCustomMenuRequested(QPoint)));
 }
+
+void MainWindow::redraw()
+{
+    int j;
+    j++;
+}
+
  void MainWindow::slotCustomMenuRequested(const QPoint pos)
  {
      QMenu menu(this);
@@ -192,7 +201,9 @@ MainWindow::MainWindow(QWidget *parent)
      if( element == nullptr)
      {
           QAction* addPerson = menu.addAction("Добавить элемент");
+          QAction* redraw = menu.addAction("Перерисовка");
           connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
+          connect(redraw, SIGNAL(triggered()), this, SLOT(redraw()));
      }
      else{
          QAction* removeItem = menu.addAction("Удалить");
