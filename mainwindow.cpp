@@ -1,18 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "glif_person.h"
-#include "genus_tree.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QDebug>
-#include <QTextCodec>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+
+
 
     QGraphicsScene* scena = new QGraphicsScene(this);
     ui->graphicsView->setScene(scena);
@@ -82,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
         Glif_Person* g_pers = new Glif_Person(id, name, name_father, born, event, die, id_father,
                                               id_brother, id_son, notes);
         g_pers->setEvent(event);
+        g_pers->setNotes(notes);
         name.clear(); name_father.clear(); born.clear(); event.clear(); die.clear();
         id_brother.clear(); id_son.clear(); notes.clear();
 
@@ -180,10 +178,43 @@ MainWindow::MainWindow(QWidget *parent)
             y+=300;
         }
 
+
+       ui->graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
+       connect(ui->graphicsView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotCustomMenuRequested(QPoint)));
 }
+ void MainWindow::slotCustomMenuRequested(const QPoint pos)
+ {
+     QMenu menu(this);
+     //Устанавливаю контекстное меню относительно позиции курсора
+     menu.popup(ui->graphicsView->viewport()->mapToGlobal(pos));
+     Glif_Person* element = dynamic_cast<Glif_Person*> (ui->graphicsView->itemAt(pos));
+     m_element = element;
+     if( element == nullptr)
+     {
+          QAction* addPerson = menu.addAction("Добавить элемент");
+          connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
+     }
+     else{
+         QAction* removeItem = menu.addAction("Удалить");
+         QAction* addLink    = menu.addAction("Добавить связь");
+         QAction* editPers   = menu.addAction("Редактирование");
+         connect(removeItem, SIGNAL(triggered()), this, SLOT(removeItem()));
+         connect(addLink   , SIGNAL(triggered()), this, SLOT(addLink   ()));
+         connect(editPers  , SIGNAL(triggered()), this, SLOT(editPers()));
+     }
+     QAction* selectedAction = menu.exec();
+ }
+
+ void MainWindow::editPers()
+ {
+     Edit_person form(this, m_element);
+     form.show();
+     form.exec();
+ }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 

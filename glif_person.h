@@ -7,6 +7,12 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 
+
+//#include "edit_person.h"
+#include <QMenu>
+
+#include <QGraphicsScene>
+
 class Glif_Person : public QObject, public QGraphicsItem
 {
     Q_OBJECT
@@ -23,8 +29,10 @@ public:
     QString      m_die;
     QStringList  m_event; ///< События у персоны
     QString      m_notes; ///< События у персоны
+//    Edit_Person  m_ed_pers;
 
 public:
+
     explicit Glif_Person(int id, QString name, QString name_father, QString born, QStringList  event,
                          QString die, int id_father, QVector<int> id_brother, QVector<int> id_son,
                          QString  notes, size_t radius = 50, QColor color = Qt::GlobalColor::green,
@@ -35,9 +43,22 @@ public:
     void setEvent(QStringList ev)
     {
         m_event = ev;
-        if( ev.at(0) == "")
-                m_color = Qt::GlobalColor::green;
+        for( QString j : ev)
+        {
+            if( j.isEmpty() )
+                m_event.pop_back();
+        }
+        if( !m_event.isEmpty() )
+                m_color = Qt::GlobalColor::yellow;
     }
+
+    void setNotes(QString note)
+    {
+        m_notes = note;
+        if( !note.isEmpty() )
+            m_color = Qt::GlobalColor::red;
+    }
+
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         /* Устанавливаем позицию графического элемента
@@ -45,7 +66,9 @@ public:
          * курсора внутри графического элемента
          * в координатную систему графической сцены
          * */
-        this->setPos(mapToScene(event->pos()));
+
+        if( event->buttons() == Qt::MouseButton::LeftButton)
+            this->setPos(mapToScene(event->pos()));
     }
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -62,8 +85,15 @@ public:
         /* При отпускании мышью элемента
          * заменяем на обычный курсор стрелку
          * */
-        this->setCursor(QCursor(Qt::ArrowCursor));
-        Q_UNUSED(event);
+        Qt::MouseButton btn = event->button();
+        if( btn == Qt::MouseButton::RightButton)
+        {
+        }
+        else
+        {
+            this->setCursor(QCursor(Qt::ArrowCursor));
+            Q_UNUSED(event);
+        }
     }
 signals:
 

@@ -16,8 +16,9 @@ Glif_Person::Glif_Person(int id, QString name, QString name_father, QString born
     m_id_son = id_son;
     m_notes = notes;
 
-    if( m_event.isEmpty() == false || notes == "")
-        m_color = Qt::GlobalColor::yellow;
+    m_color = Qt::GlobalColor::green;
+
+
 }
 
 

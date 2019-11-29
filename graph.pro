@@ -16,17 +16,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    edit_person.cpp \
     genus_tree.cpp \
     glif_person.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    edit_person.h \
     genus_tree.h \
     glif_person.h \
     mainwindow.h
 
 FORMS += \
+    edit_person.ui \
     mainwindow.ui
 
 # Default rules for deployment.
