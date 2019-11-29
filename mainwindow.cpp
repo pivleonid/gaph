@@ -137,38 +137,48 @@ MainWindow::MainWindow(QWidget *parent)
 
         qDebug() << "Остались неотсортированные персоны:" << vec_per.count();
 
-
-    //отобразим на экране дерево
-    auto node_tree = tree_list.at(0);
-    node_tree->reviewSons();
-    QList<Glif_Person*> g_pers = node_tree->v_gP;
-
-    scena->addItem(g_pers.at(0));
-    int x = 0;
-    int y = 0;
-    g_pers.at(0)->setPos(x, y);
-    QVector<int> childrens;
-    QVector<int> childrens_temp;
-    childrens = g_pers.at(0)->m_id_son;
-    while( childrens.isEmpty() == false)
-    {
-        y += 150;
-        x = 0;
-        for( int i : childrens )
+        int y = 0;
+        for( auto node_tree : tree_list)
         {
-            Glif_Person* son = node_tree->getPerson(i);
-            childrens_temp.append(son->m_id_son);
-            scena->addItem(son);
-            son->setPos(x, y);
-            childrens.pop_back();
-            x += 120;
-        }
-        childrens.append(childrens_temp);
-        childrens_temp.clear();
-    }
+            //отобразим на экране дерево
+            //auto node_tree = tree_list.at(0);
+            node_tree->reviewSons();
+            QList<Glif_Person*> g_pers = node_tree->v_gP;
 
-    int a = 0;
-     a++;
+            scena->addItem(g_pers.at(0));
+            int x = 0;
+
+            g_pers.at(0)->setPos(x, y);
+            QVector<int> childrens;
+            QVector<int> childrens_temp;
+            childrens = g_pers.at(0)->m_id_son;
+
+            while( childrens.isEmpty() == false)
+            {
+                y += 150;
+                x = 0;
+                for( int i : childrens )
+                {
+                    Glif_Person* son = node_tree->getPerson(i);
+                    if( son == nullptr)
+                        qDebug() << "Wtf?";
+                    childrens_temp.append(son->m_id_son);
+                    scena->addItem(son);
+                    son->setPos(x, y);
+                    childrens.pop_back();
+                    x += 120;
+                    //Установка линий
+                    QLineF lineBetweenItems;
+                    lineBetweenItems.setP1(node_tree->getPerson(son->m_id_father)->scenePos());
+                    lineBetweenItems.setP2(son->scenePos());
+                    scena->addLine(lineBetweenItems);
+                }
+                childrens.append(childrens_temp);
+                childrens_temp.clear();
+            }
+
+            y+=300;
+        }
 
 }
 
