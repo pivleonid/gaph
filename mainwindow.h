@@ -20,15 +20,20 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     Glif_Person* m_element; // -- выделенный элемент
+    QList<genus_tree*> tree_list;
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 public slots:
     void slotCustomMenuRequested(QPoint pos);
     void editPers();
-    void redraw();
+    void redraw( Glif_Person*);
 
 private:
     Ui::MainWindow *ui;
+    QList<linesBetweenItems*> m_listLine;
+
+
 };
 #endif // MAINWINDOW_H

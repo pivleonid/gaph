@@ -71,7 +71,7 @@ public:
         if( event->buttons() == Qt::MouseButton::LeftButton)
         {
             this->setPos(mapToScene(event->pos()));
-            emit moveElement();
+            emit moveElement(this);
         }
     }
 
@@ -100,9 +100,53 @@ public:
         }
     }
 signals:
-    void moveElement( void );
+    void moveElement( Glif_Person* );
 
 public slots:
 };
+
+
+class linesBetweenItems : public QObject, public QGraphicsLineItem
+{
+    Q_OBJECT
+    Glif_Person* m_father;
+    Glif_Person* m_son;
+    QLineF lineBetweenItems;
+public:
+
+
+    QRectF boundingRect() const override
+    {
+      QPointF point(0, m_son->m_radius);
+      return QRectF(m_father->scenePos(), m_son->scenePos());
+    }
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)  override
+    {
+      painter->setPen(Qt::black);
+      painter->setBrush(Qt::GlobalColor::black);
+      //Левая и правая координата
+      QPointF point(0, m_son->m_radius);
+      QLineF line(m_father->scenePos() +  point, m_son->scenePos() - point);
+      painter->drawLine(line);
+    }
+    linesBetweenItems(Glif_Person* father, Glif_Person* son,  QObject *parent = nullptr):
+         QObject(parent), m_father( father ), m_son(son)
+    {
+        //lineBetweenItems = new QLineF;
+    }
+
+//    void drawLine(QGraphicsScene* scene)
+//    {
+
+//        QPointF point(0, m_son->m_radius);
+//        lineBetweenItems->setP1(m_father->scenePos() +  point);
+//        lineBetweenItems->setP2(m_son->scenePos() - point);
+//        scene->addLine(*lineBetweenItems);
+//    }
+
+};
+
+
+
 
 #endif // GLIF_PERSON_H

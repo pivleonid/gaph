@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QVector<Glif_Person*> vec_per;
 
-    QList<genus_tree*> tree_list;
+    //QList<genus_tree*> tree_list;
     //Glif_Person* g_pers = new Glif_Person();
     //i==0 - заголовок
     for( int i = 1; i < count; i++)
@@ -166,12 +166,9 @@ MainWindow::MainWindow(QWidget *parent)
                     childrens.pop_back();
                     x += 120;
                     //Установка линий
-                    QLineF lineBetweenItems;
-                    QPointF point(0, son->m_radius);
-
-                    lineBetweenItems.setP1(node_tree->getPerson(son->m_id_father)->scenePos() +  point);
-                    lineBetweenItems.setP2(son->scenePos() - point);
-                    scena->addLine(lineBetweenItems);
+                    linesBetweenItems* line = new linesBetweenItems(node_tree->getPerson(son->m_id_father),son);
+                    scena->addItem(line);
+                    m_listLine.append(line);
                 }
                 childrens.append(childrens_temp);
                 childrens_temp.clear();
@@ -185,10 +182,14 @@ MainWindow::MainWindow(QWidget *parent)
        connect(ui->graphicsView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotCustomMenuRequested(QPoint)));
 }
 
-void MainWindow::redraw()
+void MainWindow::redraw( Glif_Person* element)
 {
-    int j;
-    j++;
+//    for( auto v: m_listLine)
+//        v->update();
+//    QGraphicsScene *s = element->scene();
+    element->scene()->update();
+//    s->update();
+//    ui->graphicsView->update();
 }
 
  void MainWindow::slotCustomMenuRequested(const QPoint pos)
