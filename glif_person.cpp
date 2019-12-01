@@ -18,7 +18,12 @@ Glif_Person::Glif_Person(int id, QString name, QString name_father, QString born
 
     m_color = Qt::GlobalColor::green;
 
+}
 
+Glif_Person::Glif_Person(int id, size_t radius, QColor color, QObject *parent)
+    : QObject(parent), QGraphicsItem(), m_radius(radius), m_color(color)
+{
+    m_id_father = 0;
 }
 
 

@@ -38,6 +38,8 @@ public:
                          QString die, int id_father, QVector<int> id_brother, QVector<int> id_son,
                          QString  notes, size_t radius = 50, QColor color = Qt::GlobalColor::green,
                          QObject *parent = nullptr);
+    explicit Glif_Person(int id,  size_t radius = 50, QColor color = Qt::GlobalColor::green,
+                         QObject *parent = nullptr);
     Glif_Person(const Glif_Person&);
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override;

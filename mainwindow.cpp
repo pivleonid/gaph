@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+    m_id_count = 5000;
     ui->setupUi(this);
 
 
@@ -184,39 +186,91 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::redraw( Glif_Person* element)
 {
-//    for( auto v: m_listLine)
-//        v->update();
-//    QGraphicsScene *s = element->scene();
+
     element->scene()->update();
-//    s->update();
-//    ui->graphicsView->update();
 }
 
  void MainWindow::slotCustomMenuRequested(const QPoint pos)
  {
      QMenu menu(this);
+     m_pos = pos;
      //Устанавливаю контекстное меню относительно позиции курсора
      menu.popup(ui->graphicsView->viewport()->mapToGlobal(pos));
      Glif_Person* element = dynamic_cast<Glif_Person*> (ui->graphicsView->itemAt(pos));
      m_element = element;
      if( element == nullptr)
      {
-          QAction* addPerson = menu.addAction("Добавить элемент");
-          QAction* redraw = menu.addAction("Перерисовка");
+          QAction* addPerson = menu.addAction("Добавить отца");
           connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
-          connect(redraw, SIGNAL(triggered()), this, SLOT(redraw()));
      }
      else{
          QAction* removeItem = menu.addAction("Удалить");
-         QAction* addLink    = menu.addAction("Добавить связь");
+         QAction* addBrother = menu.addAction("Добавить брата");
+         QAction* addSon     = menu.addAction("Добавить сына");
          QAction* editPers   = menu.addAction("Редактирование");
          connect(removeItem, SIGNAL(triggered()), this, SLOT(removeItem()));
-         connect(addLink   , SIGNAL(triggered()), this, SLOT(addLink   ()));
+         connect(addBrother, SIGNAL(triggered()), this, SLOT(addBrother()));
+         connect(addSon    , SIGNAL(triggered()), this, SLOT(addSon()));
          connect(editPers  , SIGNAL(triggered()), this, SLOT(editPers()));
      }
      QAction* selectedAction = menu.exec();
  }
 
+ void MainWindow::addBrother()
+ {
+     Glif_Person* father = m_element;
+     genus_tree* genus = nullptr;
+     for( auto tree : tree_list)
+     {
+         if( tree->foundId(father->m_id) == true )
+             genus = tree;
+     }
+     if( genus == nullptr)
+     {
+         qDebug() << "genus == nullptr";
+         return;
+     }
+     Glif_Person* person;
+     person = genus->getPerson(father->m_id);
+
+     //
+     Glif_Person* brother = new Glif_Person(m_id_count);
+     m_id_count++;
+     person->m_id_brother.append(brother->m_id);
+     brother->m_id_father = person->m_id_father;
+     genus->addPerson(brother);
+
+     QGraphicsScene* scena = ui->graphicsView->scene();
+     scena->addItem(brother);
+     brother->setPos(person->pos().rx() + 120, person->pos().ry());
+
+     Edit_person form(this, brother);
+     form.show();
+     form.exec();
+
+     linesBetweenItems* line = new linesBetweenItems(genus->getPerson(person->m_id_father), brother);
+     scena->addItem(line);
+     m_listLine << line;
+
+     connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
+
+ }
+void MainWindow::addPerson()
+{
+    Glif_Person* pers = new Glif_Person(m_id_count);
+    m_id_count++;
+    genus_tree* tree = new genus_tree ;
+    tree->addPerson(pers);
+    tree_list.append(tree);
+
+    QGraphicsScene* scena = ui->graphicsView->scene();
+    scena->addItem(pers);
+    pers->setPos(m_pos);
+
+    Edit_person form(this, pers);
+    form.show();
+    form.exec();
+}
  void MainWindow::editPers()
  {
      Edit_person form(this, m_element);

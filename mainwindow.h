@@ -21,6 +21,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     Glif_Person* m_element; // -- выделенный элемент
     QList<genus_tree*> tree_list;
+    int m_id_count;
+    QPoint m_pos;
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -29,6 +31,9 @@ public slots:
     void slotCustomMenuRequested(QPoint pos);
     void editPers();
     void redraw( Glif_Person*);
+    void addPerson();
+    void addBrother();
+    //void addSon();
 
 private:
     Ui::MainWindow *ui;
