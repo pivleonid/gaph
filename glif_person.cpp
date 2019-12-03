@@ -21,7 +21,7 @@ Glif_Person::Glif_Person(int id, QString name, QString name_father, QString born
 }
 
 Glif_Person::Glif_Person(int id, size_t radius, QColor color, QObject *parent)
-    : QObject(parent), QGraphicsItem(), m_radius(radius), m_color(color)
+    : QObject(parent), QGraphicsItem(), m_radius(radius), m_color(color), m_id(id)
 {
     m_id_father = 0;
 }
@@ -41,8 +41,11 @@ void Glif_Person::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWid
   painter->drawRect(QRectF(QPoint(-m_radius, 0), QPoint(m_radius, m_radius)));
 
   //x, y ,weight, height
-  painter->drawText(QRect(-m_radius, -m_radius, m_radius *2 , 20), Qt::AlignCenter, m_name);
-  painter->drawText(QRect(-m_radius , -m_radius + m_radius/2,  m_radius *2,20), Qt::AlignCenter, m_nameFather);
+  painter->drawText(QRect(-m_radius, -m_radius,                m_radius *2, 20), Qt::AlignCenter, m_name);
+  painter->drawText(QRect(-m_radius , -m_radius + m_radius/2,  m_radius *2, 20), Qt::AlignCenter, m_nameFather);
 
+  //years
+  painter->drawText(QRect(-m_radius,  0,                m_radius *2, 20), Qt::AlignCenter, m_born);
+  painter->drawText(QRect(-m_radius , 0 + m_radius/2,  m_radius *2, 20), Qt::AlignCenter, m_die);
   //painter->drawPolygon(polygon());
 }

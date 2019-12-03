@@ -12,6 +12,8 @@
 #include <QDebug>
 #include <QTextCodec>
 
+#include <QFileDialog>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -34,6 +36,9 @@ public slots:
     void addPerson();
     void addBrother();
     void addSon();
+
+    void openCSV();
+    void saveCSV();
 
 private:
     Ui::MainWindow *ui;
