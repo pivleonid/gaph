@@ -38,10 +38,17 @@ public:
     vecGliph v_gP;
     QVector<int> all_id;
 
+    void addFather(Glif_Person* gp)
+    {
+        v_gP.prepend(gp);
+        all_id.prepend(gp->m_id);
+    }
+
     bool addPerson(Glif_Person* gp)
     {
        v_gP.append(gp);
        all_id.append(gp->m_id);
+       return true;
     }
     Glif_Person* getPerson(int id)
     {

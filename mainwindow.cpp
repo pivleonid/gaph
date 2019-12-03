@@ -247,12 +247,40 @@ void MainWindow::redraw( Glif_Person* element)
      Edit_person form(this, brother);
      form.show();
      form.exec();
+     //отец не известен
+     if(brother->m_id_father == person->m_id_father && person->m_id_father == 0 )
+     {
+         Glif_Person* father = new Glif_Person(m_id_count);
+         m_id_count++;
+         genus->addFather(father);
+         brother->m_id_father = father->m_id;
+         person->m_id_father = father->m_id;
 
-     linesBetweenItems* line = new linesBetweenItems(genus->getPerson(person->m_id_father), brother);
-     scena->addItem(line);
-     m_listLine << line;
+         scena->addItem(father);
+         father->setPos(person->pos().rx() + 60, person->pos().ry() - 120);
 
-     connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
+         Edit_person form(this, brother);
+         form.show();
+         form.exec();
+
+         linesBetweenItems* line = new linesBetweenItems(father, brother);
+         linesBetweenItems* line1 = new linesBetweenItems(father, person);
+         scena->addItem(line);
+         scena->addItem(line1);
+         m_listLine << line << line1;
+
+         connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
+         connect(father, &Glif_Person::moveElement, this, &MainWindow::redraw);
+
+     }
+     {
+
+         linesBetweenItems* line = new linesBetweenItems(genus->getPerson(person->m_id_father), brother);
+         scena->addItem(line);
+         m_listLine << line;
+
+         connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
+     }
 
  }
 void MainWindow::addPerson()
