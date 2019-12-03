@@ -33,7 +33,7 @@ public slots:
     void redraw( Glif_Person*);
     void addPerson();
     void addBrother();
-    //void addSon();
+    void addSon();
 
 private:
     Ui::MainWindow *ui;

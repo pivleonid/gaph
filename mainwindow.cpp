@@ -216,6 +216,47 @@ void MainWindow::redraw( Glif_Person* element)
      QAction* selectedAction = menu.exec();
  }
 
+
+ void MainWindow::addSon()
+ {
+     Glif_Person* father = m_element;
+
+     genus_tree* genus = nullptr;
+     for( auto tree : tree_list)
+     {
+         if( tree->foundId(father->m_id) == true )
+             genus = tree;
+     }
+     if( genus == nullptr)
+     {
+         qDebug() << "genus == nullptr";
+         return;
+     }
+
+     Glif_Person* son = new Glif_Person(m_id_count);
+     m_id_count++;
+
+     father->m_id_son << son->m_id;
+     son->m_id_father = father->m_id;
+     genus->addPerson(son);
+
+     QGraphicsScene* scena = ui->graphicsView->scene();
+     scena->addItem(son);
+     son->setPos(father->pos().rx(), father->pos().ry() + 120);
+
+     Edit_person form(this, son);
+     form.show();
+     form.exec();
+
+     linesBetweenItems* line = new linesBetweenItems(father, son);
+     scena->addItem(line);
+     m_listLine << line;
+
+     connect(son, &Glif_Person::moveElement, this, &MainWindow::redraw);
+
+
+
+ }
  void MainWindow::addBrother()
  {
      Glif_Person* father = m_element;
