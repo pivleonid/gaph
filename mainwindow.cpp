@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 
-    m_id_count = 5000;
+    m_id_count = 1; // 0 индекс считается отцом
     ui->setupUi(this);
     QGraphicsScene* scena = new QGraphicsScene(this);
     ui->graphicsView->setScene(scena);
@@ -95,11 +95,11 @@ void MainWindow::redraw( Glif_Person* element)
  }
  void MainWindow::addBrother()
  {
-     Glif_Person* father = m_element;
+     Glif_Person* element = m_element;
      genus_tree* genus = nullptr;
      for( auto tree : tree_list)
      {
-         if( tree->foundId(father->m_id) == true )
+         if( tree->foundId(element->m_id) == true )
              genus = tree;
      }
      if( genus == nullptr)
@@ -107,41 +107,42 @@ void MainWindow::redraw( Glif_Person* element)
          qDebug() << "genus == nullptr";
          return;
      }
-     Glif_Person* person;
-     person = genus->getPerson(father->m_id);
+     //Glif_Person* person;
+     //person = genus->getPerson(father->m_id);
 
      //
      Glif_Person* brother = new Glif_Person(m_id_count);
      m_id_count++;
-     person->m_id_brother.append(brother->m_id);
-     brother->m_id_father = person->m_id_father;
+     element->m_id_brother.append(brother->m_id);
+     brother->m_id_brother.append(element->m_id);
+     brother->m_id_father = element->m_id_father;
      genus->addPerson(brother);
 
      QGraphicsScene* scena = ui->graphicsView->scene();
      scena->addItem(brother);
-     brother->setPos(person->pos().rx() + 120, person->pos().ry());
+     brother->setPos(element->pos().rx() + 120, element->pos().ry());
 
      Edit_person form(this, brother);
      form.show();
      form.exec();
      //отец не известен
-     if(brother->m_id_father == person->m_id_father && person->m_id_father == 0 )
+     if(brother->m_id_father == element->m_id_father && element->m_id_father == 0 )
      {
          Glif_Person* father = new Glif_Person(m_id_count);
          m_id_count++;
          genus->addFather(father);
          brother->m_id_father = father->m_id;
-         person->m_id_father = father->m_id;
+         element->m_id_father = father->m_id;
 
          scena->addItem(father);
-         father->setPos(person->pos().rx() + 60, person->pos().ry() - 120);
+         father->setPos(element->pos().rx() + 60, element->pos().ry() - 120);
 
-         Edit_person form(this, brother);
+         Edit_person form(this, father);
          form.show();
          form.exec();
 
          linesBetweenItems* line = new linesBetweenItems(father, brother);
-         linesBetweenItems* line1 = new linesBetweenItems(father, person);
+         linesBetweenItems* line1 = new linesBetweenItems(father, element);
          scena->addItem(line);
          scena->addItem(line1);
          m_listLine << line << line1;
@@ -152,10 +153,9 @@ void MainWindow::redraw( Glif_Person* element)
      }
      {
 
-         linesBetweenItems* line = new linesBetweenItems(genus->getPerson(person->m_id_father), brother);
+         linesBetweenItems* line = new linesBetweenItems(genus->getPerson(element->m_id_father), brother);
          scena->addItem(line);
          m_listLine << line;
-
          connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
      }
 
@@ -164,17 +164,22 @@ void MainWindow::addPerson()
 {
     Glif_Person* pers = new Glif_Person(m_id_count);
     m_id_count++;
+
+    QPointF pos = ui->graphicsView->mapToScene(m_pos);
     genus_tree* tree = new genus_tree ;
     tree->addPerson(pers);
     tree_list.append(tree);
 
     QGraphicsScene* scena = ui->graphicsView->scene();
     scena->addItem(pers);
-    pers->setPos(m_pos);
-
+    pers->setPos(pos);
     Edit_person form(this, pers);
     form.show();
     form.exec();
+
+    connect(pers, &Glif_Person::moveElement, this, &MainWindow::redraw);
+
+
 }
  void MainWindow::editPers()
  {
@@ -360,6 +365,13 @@ void MainWindow::openCSV()
 
 
     }
+    //--поиск макс номера
+    for( genus_tree* tree : tree_list)
+    {
+         int id = tree->getMaxId();
+         if( m_id_count < id )
+             m_id_count = id + 2;
+    }
 }
 
 
@@ -373,8 +385,10 @@ void MainWindow::saveCSV()
         if(file.open(QIODevice::WriteOnly))
         {
             QTextStream in(&file);
-            //in.setCodec("UTF-8"); // change the file codec to UTF-8.
 
+            //шапка
+            QString hat = "№ п/п;ИМЯ;ОТЧЕСТВО;Год рождения;СОБЫТИЯ;;;;;Год смерти;ОТЕЦ;БРАТЬЯ;;;;;;СЫНОВЬЯ;;;;;;Примечания\n";
+            in << hat;
 
             for( genus_tree* tree : tree_list )
             {
@@ -405,8 +419,6 @@ void MainWindow::saveCSV()
                         else
                             string.append(" ");
                     }
-
-                    string << QString::number( person->m_id_father);
 
                     count = person->m_id_son.count();
                     for( int i = 0; i < 6; i++ )

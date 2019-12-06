@@ -30,6 +30,7 @@
 
 //};
 
+#include <algorithm>
 typedef QList<Glif_Person*> vecGliph;
 class genus_tree
 {
@@ -93,6 +94,12 @@ public:
 
         }
     }
+
+    int getMaxId()
+    {
+        return  *std::max_element(all_id.constBegin(), all_id.constEnd());
+    }
+
 
 };
 
