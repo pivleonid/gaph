@@ -385,6 +385,8 @@ void MainWindow::saveCSV()
         if(file.open(QIODevice::WriteOnly))
         {
             QTextStream in(&file);
+            in.setCodec("UTF-8");
+            in.setGenerateByteOrderMark(true);
 
             //шапка
             QString hat = "№ п/п;ИМЯ;ОТЧЕСТВО;Год рождения;СОБЫТИЯ;;;;;Год смерти;ОТЕЦ;БРАТЬЯ;;;;;;СЫНОВЬЯ;;;;;;Примечания\n";
@@ -406,7 +408,7 @@ void MainWindow::saveCSV()
                         if( i < count )
                             string.append(person->m_event.at(i));
                         else
-                            string.append(" ");
+                            string.append("");
                     }
                     string.append(person->m_die);
                     string << QString::number( person->m_id_father);
@@ -417,7 +419,7 @@ void MainWindow::saveCSV()
                         if( i < count )
                             string<< QString::number(person->m_id_brother.at(i));
                         else
-                            string.append(" ");
+                            string.append("");
                     }
 
                     count = person->m_id_son.count();
@@ -429,7 +431,7 @@ void MainWindow::saveCSV()
                         }
                         else
                         {
-                            string.append(" ");
+                            string.append("");
                         }
                     }
                     string.append(person->m_notes);
