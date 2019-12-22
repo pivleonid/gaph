@@ -99,6 +99,33 @@ public:
     {
         return  *std::max_element(all_id.constBegin(), all_id.constEnd());
     }
+    /**
+     * @brief deletePerson
+     * @param person
+     * @return false - если дерево пустое
+     */
+    bool deletePerson(Glif_Person* person)
+    {
+        //удаляем связь между персоной и сыновьями
+        for( int id_child : person->m_id_son)
+        {
+            Glif_Person* son = this->getPerson(id_child);
+            son->m_id_father = 0;
+        }
+        //если есть отец- стираем информацию о предке
+        if(person->m_id_father != 0)
+        {
+            Glif_Person* father = this->getPerson(person->m_id_father);
+            int index = father->m_id_son.indexOf(person->m_id);
+            father->m_id_son.remove(index);
+        }
+        //стираю инфомцию из дерева
+        all_id.remove(all_id.indexOf(person->m_id));
+        //delete person;
+        if( all_id.count() > 0)
+            return true;
+        return  false;
+    }
 
 
 };

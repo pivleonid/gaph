@@ -21,8 +21,23 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Glif_Person* m_element; // -- выделенный элемент
-    QList<genus_tree*> tree_list;
+    Glif_Person* m_element; ///< выделенный элемент на сцене
+    QList<genus_tree*> tree_list; ///< QList деревьев
+    /**
+     * @brief getTree получить указатель на дерево
+     * @param person ячейка дерева
+     * @return nullptr- такой ячейки нет
+     */
+    genus_tree* getTree(Glif_Person* person)
+    {
+        genus_tree* genus = nullptr;
+        for( auto tree : tree_list)
+        {
+            if( tree->foundId(person->m_id) == true )
+                genus = tree;
+        }
+        return genus;
+    }
     int m_id_count;
     QPoint m_pos;
 
@@ -36,6 +51,7 @@ public slots:
     void addPerson();
     void addBrother();
     void addSon();
+    void removeItem();
 
     void openCSV();
     void saveCSV();

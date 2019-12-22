@@ -52,7 +52,20 @@ void MainWindow::redraw( Glif_Person* element)
      QAction* selectedAction = menu.exec();
  }
 
+ void MainWindow::removeItem()
+ {
+     QGraphicsScene* scena = ui->graphicsView->scene();
+     scena->removeItem(m_element);
+     genus_tree* genus = getTree(m_element);
+     if( genus == nullptr)
+     {
+         qDebug() << "genus == nullptr. func_remove_item";
+         return;
+     }
+     genus->deletePerson(m_element);
 
+     //удалить со сцены все линии, ведущие к этому элементу
+ }
  void MainWindow::addSon()
  {
      Glif_Person* father = m_element;
