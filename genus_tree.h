@@ -119,9 +119,12 @@ public:
             int index = father->m_id_son.indexOf(person->m_id);
             father->m_id_son.remove(index);
         }
+
         //стираю инфомцию из дерева
         all_id.remove(all_id.indexOf(person->m_id));
-        //delete person;
+        v_gP.removeAt(v_gP.indexOf(person));
+        delete person;
+
         if( all_id.count() > 0)
             return true;
         return  false;

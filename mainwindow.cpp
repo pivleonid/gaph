@@ -62,9 +62,27 @@ void MainWindow::redraw( Glif_Person* element)
          qDebug() << "genus == nullptr. func_remove_item";
          return;
      }
-     genus->deletePerson(m_element);
+     //Сначала удалить все линиии- иначе hard fault
+     //
+     QVector<int> index;
+     for (linesBetweenItems* tmp : m_listLine)
+     {
+         if(tmp->m_son == m_element || tmp->m_father == m_element)
+         {
+             index << m_listLine.indexOf(tmp);
+             scena->removeItem(tmp);
+         }
+     }
+     int j = 0;
+     for( int i : index)
+     {
+         m_listLine.removeAt(i - j);
+         j++; //кол-во эл-тов будет уменьшаься
+     }
 
-     //удалить со сцены все линии, ведущие к этому элементу
+     genus->deletePerson(m_element);
+     m_element = nullptr;
+
  }
  void MainWindow::addSon()
  {

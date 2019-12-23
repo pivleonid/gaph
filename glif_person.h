@@ -41,6 +41,11 @@ public:
     explicit Glif_Person(int id,  size_t radius = 50, QColor color = Qt::GlobalColor::green,
                          QObject *parent = nullptr);
     Glif_Person(const Glif_Person&);
+    ~Glif_Person()
+    {
+        int a;
+        a++;
+    }
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override;
     void setEvent(QStringList ev)
@@ -111,11 +116,11 @@ public slots:
 class linesBetweenItems : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
-    Glif_Person* m_father;
-    Glif_Person* m_son;
+
     QLineF lineBetweenItems;
 public:
-
+    Glif_Person* m_father;
+    Glif_Person* m_son;
 
     QRectF boundingRect() const override
     {
@@ -134,6 +139,7 @@ public:
     linesBetweenItems(Glif_Person* father, Glif_Person* son,  QObject *parent = nullptr):
          QObject(parent), m_father( father ), m_son(son)
     {
+        //lineBetweenItems.setP1()
         //lineBetweenItems = new QLineF;
     }
 
