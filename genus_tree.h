@@ -4,6 +4,8 @@
 #include "glif_person.h"
 #include "qvector.h"
 
+#include <QDebug>
+
 //template <class T> class CTree_node
 //{
 //public:
@@ -110,12 +112,16 @@ public:
         for( int id_child : person->m_id_son)
         {
             Glif_Person* son = this->getPerson(id_child);
+            if( son == nullptr)
+                qDebug() << "son == nulptr, id_child:" << id_child;
             son->m_id_father = 0;
         }
         //если есть отец- стираем информацию о предке
         if(person->m_id_father != 0)
         {
             Glif_Person* father = this->getPerson(person->m_id_father);
+            if( father == nullptr)
+                qDebug() << "father == nulptr";
             int index = father->m_id_son.indexOf(person->m_id);
             father->m_id_son.remove(index);
         }
@@ -123,7 +129,7 @@ public:
         //стираю инфомцию из дерева
         all_id.remove(all_id.indexOf(person->m_id));
         v_gP.removeAt(v_gP.indexOf(person));
-        delete person;
+        //delete person;
 
         if( all_id.count() > 0)
             return true;

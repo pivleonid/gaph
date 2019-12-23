@@ -76,11 +76,14 @@ void MainWindow::redraw( Glif_Person* element)
      int j = 0;
      for( int i : index)
      {
+         linesBetweenItems* tmp = m_listLine.at(i-j);
+         delete tmp;
          m_listLine.removeAt(i - j);
          j++; //кол-во эл-тов будет уменьшаься
      }
 
      genus->deletePerson(m_element);
+     delete m_element;
      m_element = nullptr;
 
  }
@@ -162,6 +165,7 @@ void MainWindow::redraw( Glif_Person* element)
          Glif_Person* father = new Glif_Person(m_id_count);
          m_id_count++;
          genus->addFather(father);
+         father->m_id_son << element->m_id << brother->m_id;
          brother->m_id_father = father->m_id;
          element->m_id_father = father->m_id;
 
@@ -182,9 +186,11 @@ void MainWindow::redraw( Glif_Person* element)
          connect(father, &Glif_Person::moveElement, this, &MainWindow::redraw);
 
      }
+     else
      {
-
-         linesBetweenItems* line = new linesBetweenItems(genus->getPerson(element->m_id_father), brother);
+         Glif_Person* father = genus->getPerson(element->m_id_father);
+         father->m_id_son << brother->m_id;
+         linesBetweenItems* line = new linesBetweenItems(father, brother);
          scena->addItem(line);
          m_listLine << line;
          connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
