@@ -55,7 +55,7 @@ void MainWindow::redraw( Glif_Person* element)
  void MainWindow::removeItem()
  {
      QGraphicsScene* scena = ui->graphicsView->scene();
-     scena->removeItem(m_element);
+    // scena->removeItem(m_element);
      genus_tree* genus = getTree(m_element);
      if( genus == nullptr)
      {
@@ -70,7 +70,7 @@ void MainWindow::redraw( Glif_Person* element)
          if(tmp->m_son == m_element || tmp->m_father == m_element)
          {
              index << m_listLine.indexOf(tmp);
-             scena->removeItem(tmp);
+             //scena->removeItem(tmp);
          }
      }
      int j = 0;
