@@ -25,7 +25,7 @@ void MainWindow::redraw( Glif_Person* element)
 
     element->scene()->update();
 }
-
+#include <QMessageBox>
  void MainWindow::slotCustomMenuRequested(const QPoint pos)
  {
      QMenu menu(this);
@@ -40,6 +40,19 @@ void MainWindow::redraw( Glif_Person* element)
           connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
      }
      else{
+
+            Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers ();
+            //если зажата клавиша shift
+            if (keyMod.testFlag(Qt::ShiftModifier))
+            {
+                QAction* boldFather = menu.addAction("Выделить отца");
+                QAction* boldSon    = menu.addAction("Выделить сына");
+                connect(boldFather, SIGNAL(triggered()), this, SLOT(boldFather()));
+                connect(boldSon, SIGNAL(triggered()), this, SLOT(boldSon()));
+                QAction* selectedAction = menu.exec();
+                return;
+            }
+
          QAction* removeItem = menu.addAction("Удалить");
          QAction* addBrother = menu.addAction("Добавить брата");
          QAction* addSon     = menu.addAction("Добавить сына");
@@ -51,6 +64,21 @@ void MainWindow::redraw( Glif_Person* element)
      }
      QAction* selectedAction = menu.exec();
  }
+
+ void MainWindow::boldFather()
+ {
+     m_el_father = m_element;
+     m_el_father->setBold();
+     redraw(m_el_father);
+ }
+
+ void MainWindow::boldSon()
+ {
+     m_el_son = m_element;
+     m_el_son->setNormal();
+     redraw(m_el_son);
+ }
+
 
  void MainWindow::removeItem()
  {

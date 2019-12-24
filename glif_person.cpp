@@ -18,12 +18,15 @@ Glif_Person::Glif_Person(int id, QString name, QString name_father, QString born
 
     m_color = Qt::GlobalColor::green;
 
+
+
 }
 
 Glif_Person::Glif_Person(int id, size_t radius, QColor color, QObject *parent)
     : QObject(parent), QGraphicsItem(), m_radius(radius), m_color(color), m_id(id)
 {
     m_id_father = 0;
+
 }
 
 
@@ -34,8 +37,11 @@ void Glif_Person::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWid
 {
 
 
-  painter->setPen(Qt::black);
-  painter->setBrush(m_color);
+    if( m_flagBold == true)
+        painter->setPen(QPen(Qt::blue, 3, Qt::DotLine));
+    else
+        painter->setPen(QPen(Qt::black, 0, Qt::SolidLine));
+    painter->setBrush(m_color);
   //Левая и правая координата
   painter->drawRect(QRectF(QPoint(-m_radius, -m_radius), QPoint(m_radius, m_radius)));
   painter->drawRect(QRectF(QPoint(-m_radius, 0), QPoint(m_radius, m_radius)));
@@ -48,4 +54,14 @@ void Glif_Person::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWid
   painter->drawText(QRect(-m_radius,  0,                m_radius *2, 20), Qt::AlignCenter, m_born);
   painter->drawText(QRect(-m_radius , 0 + m_radius/2,  m_radius *2, 20), Qt::AlignCenter, m_die);
   //painter->drawPolygon(polygon());
+}
+
+void Glif_Person::setBold()
+{
+    m_flagBold = true;
+}
+
+void Glif_Person::setNormal()
+{
+    m_flagBold = false;
 }

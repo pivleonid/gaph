@@ -12,10 +12,12 @@
 #include <QMenu>
 
 #include <QGraphicsScene>
-
+#include <QPen>
 class Glif_Person : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+
+    bool m_flagBold;
 public:
     size_t       m_radius;
     QColor       m_color;
@@ -43,9 +45,10 @@ public:
     Glif_Person(const Glif_Person&);
     ~Glif_Person()
     {
-        int a;
-        a++;
+
     }
+    void setBold();
+    void setNormal();
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override;
     void setEvent(QStringList ev)

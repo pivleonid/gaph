@@ -21,7 +21,9 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Glif_Person* m_element; ///< выделенный элемент на сцене
+    Glif_Person* m_element = nullptr; ///< выделенный элемент на сцене
+    Glif_Person* m_el_father = nullptr;///< выделенный элемент отца
+    Glif_Person* m_el_son = nullptr;///< выделенный элемент сына
     QList<genus_tree*> tree_list; ///< QList деревьев
     /**
      * @brief getTree получить указатель на дерево
@@ -55,6 +57,9 @@ public slots:
 
     void openCSV();
     void saveCSV();
+
+    void boldFather();
+    void boldSon();
 
 private:
     Ui::MainWindow *ui;
