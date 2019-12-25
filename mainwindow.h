@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow
     Glif_Person* m_element = nullptr; ///< выделенный элемент на сцене
     Glif_Person* m_el_father = nullptr;///< выделенный элемент отца
     Glif_Person* m_el_son = nullptr;///< выделенный элемент сына
+    bool m_f_connectionEnabled = false;
     QList<genus_tree*> tree_list; ///< QList деревьев
     /**
      * @brief getTree получить указатель на дерево
@@ -60,6 +61,9 @@ public slots:
 
     void boldFather();
     void boldSon();
+
+    void addConnection();
+    void deleteConnection();
 
 private:
     Ui::MainWindow *ui;

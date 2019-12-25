@@ -37,8 +37,10 @@ void Glif_Person::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWid
 {
 
 
-    if( m_flagBold == true)
+    if( m_flagBold_1 == true)
         painter->setPen(QPen(Qt::blue, 3, Qt::DotLine));
+    else if( m_flagBold_2 == true)
+        painter->setPen(QPen(Qt::darkRed, 3, Qt::DashDotLine));
     else
         painter->setPen(QPen(Qt::black, 0, Qt::SolidLine));
     painter->setBrush(m_color);
@@ -56,12 +58,17 @@ void Glif_Person::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWid
   //painter->drawPolygon(polygon());
 }
 
-void Glif_Person::setBold()
+void Glif_Person::setBold_1()
 {
-    m_flagBold = true;
+    m_flagBold_1 = true;
+}
+void Glif_Person::setBold_2()
+{
+    m_flagBold_2 = true;
 }
 
 void Glif_Person::setNormal()
 {
-    m_flagBold = false;
+    m_flagBold_1 = false;
+    m_flagBold_2 = false;
 }

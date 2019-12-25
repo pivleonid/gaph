@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::redraw( Glif_Person* element)
 {
-
     element->scene()->update();
 }
 #include <QMessageBox>
@@ -36,6 +35,13 @@ void MainWindow::redraw( Glif_Person* element)
      m_element = element;
      if( element == nullptr)
      {
+         if( m_f_connectionEnabled == true)
+         {
+             QAction* addConnection = menu.addAction("Добавить связь");
+             QAction* deleteConnection = menu.addAction("Удалить связь");
+             connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
+             connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
+         }
           QAction* addPerson = menu.addAction("Добавить отца");
           connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
      }
@@ -65,18 +71,58 @@ void MainWindow::redraw( Glif_Person* element)
      QAction* selectedAction = menu.exec();
  }
 
+void MainWindow::addConnection()
+{
+    if(m_el_father == nullptr || m_el_son == nullptr)
+    {
+        qDebug() << "m_el_father == nullptr || m_el_son == nullptr";
+        return;
+    }
+    m_el_father->setNormal();
+    m_el_son->setNormal();
+    redraw(m_el_father);
+    redraw(m_el_son);
+    m_f_connectionEnabled = false;
+    m_el_father = nullptr;
+    m_el_son = nullptr;
+
+}
+void MainWindow::deleteConnection()
+{
+    if(m_el_father == nullptr || m_el_son == nullptr)
+    {
+        qDebug() << "m_el_father == nullptr || m_el_son == nullptr";
+        return;
+    }
+    m_el_father->setNormal();
+    m_el_son->setNormal();
+    redraw(m_el_father);
+    redraw(m_el_son);
+    m_f_connectionEnabled = false;
+    m_el_father = nullptr;
+    m_el_son = nullptr;
+}
+
  void MainWindow::boldFather()
  {
+     if( m_el_father != nullptr)
+         m_el_father->setNormal();
      m_el_father = m_element;
-     m_el_father->setBold();
+     m_el_father->setBold_1();
      redraw(m_el_father);
+     if( m_el_son != nullptr)
+         m_f_connectionEnabled = true;
  }
 
  void MainWindow::boldSon()
  {
+     if( m_el_son != nullptr)
+         m_el_son->setNormal();
      m_el_son = m_element;
-     m_el_son->setNormal();
+     m_el_son->setBold_2();
      redraw(m_el_son);
+     if( m_el_father != nullptr)
+         m_f_connectionEnabled = true;
  }
 
 
@@ -113,6 +159,7 @@ void MainWindow::redraw( Glif_Person* element)
      genus->deletePerson(m_element);
      delete m_element;
      m_element = nullptr;
+     scena->update();
 
  }
  void MainWindow::addSon()
@@ -145,6 +192,7 @@ void MainWindow::redraw( Glif_Person* element)
      Edit_person form(this, son);
      form.show();
      form.exec();
+     son->setColorFrom_Notes_event();
 
      linesBetweenItems* line = new linesBetweenItems(father, son);
      scena->addItem(line);
@@ -184,9 +232,14 @@ void MainWindow::redraw( Glif_Person* element)
      scena->addItem(brother);
      brother->setPos(element->pos().rx() + 120, element->pos().ry());
 
-     Edit_person form(this, brother);
-     form.show();
-     form.exec();
+
+     {
+         Edit_person form(this, brother);
+         form.show();
+         form.exec();
+     }
+     brother->setColorFrom_Notes_event();
+
      //отец не известен
      if(brother->m_id_father == element->m_id_father && element->m_id_father == 0 )
      {
@@ -200,16 +253,20 @@ void MainWindow::redraw( Glif_Person* element)
          scena->addItem(father);
          father->setPos(element->pos().rx() + 60, element->pos().ry() - 120);
 
-         Edit_person form(this, father);
-         form.show();
-         form.exec();
+
+         {
+             Edit_person form(this, father);
+             form.show();
+             form.exec();
+         }
+         father->setColorFrom_Notes_event();
 
          linesBetweenItems* line = new linesBetweenItems(father, brother);
          linesBetweenItems* line1 = new linesBetweenItems(father, element);
          scena->addItem(line);
          scena->addItem(line1);
          m_listLine << line << line1;
-
+         father->setColorFrom_Notes_event();
          connect(brother, &Glif_Person::moveElement, this, &MainWindow::redraw);
          connect(father, &Glif_Person::moveElement, this, &MainWindow::redraw);
 
@@ -238,9 +295,12 @@ void MainWindow::addPerson()
     QGraphicsScene* scena = ui->graphicsView->scene();
     scena->addItem(pers);
     pers->setPos(pos);
-    Edit_person form(this, pers);
-    form.show();
-    form.exec();
+    {
+        Edit_person form(this, pers);
+        form.show();
+        form.exec();
+    }
+    pers->setColorFrom_Notes_event();
 
     connect(pers, &Glif_Person::moveElement, this, &MainWindow::redraw);
 
@@ -248,9 +308,13 @@ void MainWindow::addPerson()
 }
  void MainWindow::editPers()
  {
-     Edit_person form(this, m_element);
-     form.show();
-     form.exec();
+
+     {
+         Edit_person form(this, m_element);
+         form.show();
+         form.exec();
+     }
+     m_element->setColorFrom_Notes_event();
  }
 
 MainWindow::~MainWindow()
@@ -328,8 +392,8 @@ void MainWindow::openCSV()
 
             Glif_Person* g_pers = new Glif_Person(id, name, name_father, born, event, die, id_father,
                                                   id_brother, id_son, notes);
-            g_pers->setEvent(event);
-            g_pers->setNotes(notes);
+            g_pers->set_EventAndNotes(event, notes);
+
             name.clear(); name_father.clear(); born.clear(); event.clear(); die.clear();
             id_brother.clear(); id_son.clear(); notes.clear();
 

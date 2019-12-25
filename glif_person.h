@@ -17,7 +17,8 @@ class Glif_Person : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
-    bool m_flagBold;
+    bool m_flagBold_1;
+    bool m_flagBold_2;
 public:
     size_t       m_radius;
     QColor       m_color;
@@ -47,27 +48,37 @@ public:
     {
 
     }
-    void setBold();
+    void setBold_1();
+    void setBold_2();
     void setNormal();
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override;
-    void setEvent(QStringList ev)
+    void set_EventAndNotes(QStringList ev, QString note)
     {
         m_event = ev;
-        for( QString j : ev)
-        {
-            if( j.isEmpty() )
-                m_event.pop_back();
-        }
-        if( !m_event.isEmpty() )
-                m_color = Qt::GlobalColor::yellow;
-    }
-
-    void setNotes(QString note)
-    {
         m_notes = note;
-        if( !note.isEmpty() )
+        setColorFrom_Notes_event();
+    }
+    void setColorFrom_Notes_event()
+    {
+        if( !this->m_notes.isEmpty() )
+        {
             m_color = Qt::GlobalColor::red;
+        }
+        if(!m_event.isEmpty())
+        {
+            for( QString j : m_event)
+            {
+                if( j.isEmpty() )
+                    m_event.pop_back();
+            }
+            if( !m_event.isEmpty() )
+                    m_color = Qt::GlobalColor::yellow;
+        }
+        if( !this->m_notes.isEmpty() && !m_event.isEmpty())
+            m_color = Qt::GlobalColor::darkYellow;
+        if( this->m_notes.isEmpty() && m_event.isEmpty())
+            m_color = Qt::GlobalColor::green;
     }
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event)

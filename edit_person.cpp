@@ -9,14 +9,14 @@ Edit_person::Edit_person(QWidget *parent, Glif_Person* pers) :
         this->close();
 
     ui->lineEdit_name->setText(m_pers->m_name);
-            ui->lineEdit_nameFather->setText(m_pers->m_nameFather);
-            ui->lineEdit_die->setText(m_pers->m_die);
-            ui->lineEdit_born->setText(m_pers->m_born);
-            ui->lineEdit_notes->setText(m_pers->m_notes);
-            QString event;
-            for( auto var: m_pers->m_event)
-                event.append(var + "\n");
-            ui->plainTextEdit->setPlainText(event);
+    ui->lineEdit_nameFather->setText(m_pers->m_nameFather);
+    ui->lineEdit_die->setText(m_pers->m_die);
+    ui->lineEdit_born->setText(m_pers->m_born);
+    ui->lineEdit_notes->setText(m_pers->m_notes);
+    QString event;
+    for( auto var: m_pers->m_event)
+        event.append(var + "\n");
+    ui->plainTextEdit->setPlainText(event);
 
 }
 
