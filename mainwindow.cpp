@@ -39,6 +39,7 @@ void MainWindow::redraw( Glif_Person* element)
          {
              QAction* addConnection = menu.addAction("Добавить связь");
              QAction* deleteConnection = menu.addAction("Удалить связь");
+             menu.addSeparator();
              connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
              connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
          }
