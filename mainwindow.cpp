@@ -24,53 +24,56 @@ void MainWindow::redraw( Glif_Person* element)
 {
     element->scene()->update();
 }
-#include <QMessageBox>
- void MainWindow::slotCustomMenuRequested(const QPoint pos)
- {
-     QMenu menu(this);
-     m_pos = pos;
-     //Устанавливаю контекстное меню относительно позиции курсора
-     menu.popup(ui->graphicsView->viewport()->mapToGlobal(pos));
-     Glif_Person* element = dynamic_cast<Glif_Person*> (ui->graphicsView->itemAt(pos));
-     m_element = element;
-     if( element == nullptr)
-     {
-         if( m_f_connectionEnabled == true)
-         {
-             QAction* addConnection = menu.addAction("Добавить связь");
-             QAction* deleteConnection = menu.addAction("Удалить связь");
-             menu.addSeparator();
-             connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
-             connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
-         }
-          QAction* addPerson = menu.addAction("Добавить отца");
-          connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
-     }
-     else{
 
-            Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers ();
-            //если зажата клавиша shift
-            if (keyMod.testFlag(Qt::ShiftModifier))
-            {
-                QAction* boldFather = menu.addAction("Выделить отца");
-                QAction* boldSon    = menu.addAction("Выделить сына");
-                connect(boldFather, SIGNAL(triggered()), this, SLOT(boldFather()));
-                connect(boldSon, SIGNAL(triggered()), this, SLOT(boldSon()));
-                QAction* selectedAction = menu.exec();
-                return;
-            }
+void MainWindow::slotCustomMenuRequested(const QPoint pos)
+{
+    QMenu menu(this);
+    m_pos = pos;
+    //Устанавливаю контекстное меню относительно позиции курсора
+    menu.popup(ui->graphicsView->viewport()->mapToGlobal(pos));
 
-         QAction* removeItem = menu.addAction("Удалить");
-         QAction* addBrother = menu.addAction("Добавить брата");
-         QAction* addSon     = menu.addAction("Добавить сына");
-         QAction* editPers   = menu.addAction("Редактирование");
-         connect(removeItem, SIGNAL(triggered()), this, SLOT(removeItem()));
-         connect(addBrother, SIGNAL(triggered()), this, SLOT(addBrother()));
-         connect(addSon    , SIGNAL(triggered()), this, SLOT(addSon()));
-         connect(editPers  , SIGNAL(triggered()), this, SLOT(editPers()));
-     }
-     QAction* selectedAction = menu.exec();
- }
+    Glif_Person* element = dynamic_cast<Glif_Person*> (ui->graphicsView->itemAt(pos));
+
+    m_element = element;
+    if( element == nullptr)
+    {
+        if( m_f_connectionEnabled == true)
+        {
+            QAction* addConnection = menu.addAction("Добавить связь");
+            QAction* deleteConnection = menu.addAction("Удалить связь");
+            menu.addSeparator();
+            connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
+            connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
+        }
+        QAction* addPerson = menu.addAction("Добавить отца");
+        connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
+    }
+    else{
+
+        Qt::KeyboardModifiers keyMod = QApplication::keyboardModifiers ();
+        //если зажата клавиша shift
+        if (keyMod.testFlag(Qt::ShiftModifier))
+        {
+            QAction* boldFather = menu.addAction("Выделить отца");
+            QAction* boldSon    = menu.addAction("Выделить сына");
+            connect(boldFather, SIGNAL(triggered()), this, SLOT(boldFather()));
+            connect(boldSon, SIGNAL(triggered()), this, SLOT(boldSon()));
+            QAction* selectedAction = menu.exec();
+            return;
+        }
+
+        QAction* removeItem = menu.addAction("Удалить");
+        QAction* addBrother = menu.addAction("Добавить брата");
+        QAction* addSon     = menu.addAction("Добавить сына");
+        QAction* editPers   = menu.addAction("Редактирование");
+        connect(removeItem, SIGNAL(triggered()), this, SLOT(removeItem()));
+        connect(addBrother, SIGNAL(triggered()), this, SLOT(addBrother()));
+        connect(addSon    , SIGNAL(triggered()), this, SLOT(addSon()));
+        connect(editPers  , SIGNAL(triggered()), this, SLOT(editPers()));
+    }
+    QAction* selectedAction = menu.exec();
+
+}
 
 void MainWindow::addConnection()
 {
@@ -190,9 +193,11 @@ void MainWindow::deleteConnection()
      scena->addItem(son);
      son->setPos(father->pos().rx(), father->pos().ry() + 120);
 
-     Edit_person form(this, son);
-     form.show();
-     form.exec();
+     {
+         Edit_person form(this, son);
+         form.show();
+         form.exec();
+     }
      son->setColorFrom_Notes_event();
 
      linesBetweenItems* line = new linesBetweenItems(father, son);
@@ -333,7 +338,8 @@ void MainWindow::openCSV()
         QGraphicsScene* scena = ui->graphicsView->scene();
         QFile file (nameFile);
         QTextStream in(&file);
-        in.setCodec("UTF-8"); // change the file codec to UTF-8.
+        in.setCodec("IBM 866"); // change the file codec to UTF-8.
+        //in.setGenerateByteOrderMark(false);
 
         QStringList list, list_split;
         if(file.open(QIODevice::ReadOnly))
@@ -515,6 +521,7 @@ void MainWindow::saveCSV()
         if(file.open(QIODevice::WriteOnly))
         {
             QTextStream in(&file);
+            //in.setCodec("IBM 866");
             in.setCodec("UTF-8");
             in.setGenerateByteOrderMark(true);
 

@@ -17,8 +17,8 @@ class Glif_Person : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
-    bool m_flagBold_1;
-    bool m_flagBold_2;
+    bool m_flagBold_1 = false;
+    bool m_flagBold_2 = false;
 public:
     size_t       m_radius;
     QColor       m_color;
