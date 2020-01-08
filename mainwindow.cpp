@@ -38,15 +38,20 @@ void MainWindow::slotCustomMenuRequested(const QPoint pos)
     {
         if( m_f_connectionEnabled == true)
         {
-            QAction* addConnection = menu.addAction("Добавить связь");
+            //у отца детей должно быть меньше 6, а у сына не должен быть отец
+            if(m_el_father->m_id_son.size() < 6 && m_el_son->m_id_father == 0)
+            {
+                QAction* addConnection = menu.addAction("Добавить связь");
+                connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
+                menu.addSeparator();
+            }
             //Есть ли у отца такой ребенок
             if( m_el_father->m_id_son.indexOf(m_el_son->m_id) >= 0)
             {
                 QAction* deleteConnection = menu.addAction("Удалить связь");
                 connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
             }
-            menu.addSeparator();
-            connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
+
 
         }
         QAction* addPerson = menu.addAction("Добавить отца");
@@ -90,6 +95,9 @@ void MainWindow::addConnection()
     m_el_son->setNormal();
     redraw(m_el_father);
     redraw(m_el_son);
+
+
+
     m_f_connectionEnabled = false;
     m_el_father = nullptr;
     m_el_son = nullptr;
@@ -354,21 +362,7 @@ void MainWindow::openCSV()
     QString nameFile = QFileDialog::getOpenFileName(this, tr("Открыть файл"), QDir::currentPath(), tr("Файл csv (*.csv)"));
     if(nameFile.size() != 0) {
 
-        //очистка предыдущего
-        //удаляю визуальную связь
-        for (linesBetweenItems* tmp : m_listLine)
-        {
-
-            m_listLine.removeOne(tmp);
-            delete tmp;
-
-        }
-        for( genus_tree* tree : tree_list)
-        {
-            tree_list.removeFirst();
-            delete tree;
-        }
-        m_id_count = 1;
+        clearView();
 
         QGraphicsScene* scena = ui->graphicsView->scene();
         QFile file (nameFile);
@@ -616,5 +610,24 @@ void MainWindow::saveCSV()
 
 
     }
+}
+
+void MainWindow::clearView()
+{
+    //очистка предыдущего
+    //удаляю визуальную связь
+    for (linesBetweenItems* tmp : m_listLine)
+    {
+
+        m_listLine.removeOne(tmp);
+        delete tmp;
+
+    }
+    for( genus_tree* tree : tree_list)
+    {
+        tree_list.removeFirst();
+        delete tree;
+    }
+    m_id_count = 1;
 }
 

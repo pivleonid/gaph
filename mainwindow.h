@@ -69,6 +69,9 @@ private:
     Ui::MainWindow *ui;
     QList<linesBetweenItems*> m_listLine;
 
+    //очистка содержимого со сцены
+    void clearView();
+
 
 };
 #endif // MAINWINDOW_H

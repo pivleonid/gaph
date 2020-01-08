@@ -41,109 +41,38 @@ public:
     vecGliph v_gP;
     QVector<int> all_id;
 
-    void addFather(Glif_Person* gp)
-    {
-        v_gP.prepend(gp);
-        all_id.prepend(gp->m_id);
-    }
+    void addFather(Glif_Person* gp);
+    Glif_Person* getFather();
 
-    bool addPerson(Glif_Person* gp)
-    {
-       v_gP.append(gp);
-       all_id.append(gp->m_id);
-       return true;
-    }
-    Glif_Person* getPerson(int id)
-    {
-        for( auto person : v_gP)
-        {
-            if ( person->m_id == id )
-                return person;
-        }
-        return nullptr;
-    }
-    bool foundId(int id)
-    {
-        for(auto var : v_gP)
-        {
-            if( var->m_id == id )
-                return true;
-        }
-        return  false;
-    }
-
-    void reviewSons()
-    {
-        for( int i : all_id)
-        {
-            Glif_Person* son = getPerson( i );
-            for( int s : son->m_id_son)
-            {
-                if( s == 0)
-                    son->m_id_son.pop_back();
-            }
-            for( QString j : son->m_event)
-            {
-                if( j == 0)
-                    son->m_event.pop_back();
-            }
-            Glif_Person* father = getPerson(son->m_id_father);
-            if( father == nullptr)
-                continue;
-            //если таких номеров нет- добавляем
-            if( father->m_id_son.indexOf(son->m_id) < 0 )
-                father->m_id_son.append(son->m_id);
-
-        }
-    }
-
-    int getMaxId()
-    {
-        return  *std::max_element(all_id.constBegin(), all_id.constEnd());
-    }
+    bool addPerson(Glif_Person* gp);
+    Glif_Person* getPerson(int id);
+    /**
+     * @brief foundId
+     * @param id
+     * @return возвращает указатель на глиф в дереве
+     */
+    bool foundId(int id);
+    void reviewSons();
+    /**
+     * @brief getMaxId- получение max id
+     * @return
+     */
+    int getMaxId();
     /**
      * @brief deletePerson
      * @param person
      * @return false - если дерево пустое
      */
-    bool deletePerson(Glif_Person* person)
-    {
-        //удаляем связь между персоной и сыновьями
-        for( int id_child : person->m_id_son)
-        {
-            Glif_Person* son = this->getPerson(id_child);
-            if( son == nullptr)
-                qDebug() << "son == nulptr, id_child:" << id_child;
-            son->m_id_father = 0;
-        }
-        //если есть отец- стираем информацию о предке
-        if(person->m_id_father != 0)
-        {
-            Glif_Person* father = this->getPerson(person->m_id_father);
-            if( father == nullptr)
-                qDebug() << "father == nulptr";
-            int index = father->m_id_son.indexOf(person->m_id);
-            father->m_id_son.remove(index);
-        }
-
-        //стираю инфомцию из дерева
-        all_id.remove(all_id.indexOf(person->m_id));
-        v_gP.removeAt(v_gP.indexOf(person));
-        //delete person;
-
-        if( all_id.count() > 0)
-            return true;
-        return  false;
-    }
-
-    ~genus_tree()
-    {
-        for(Glif_Person* gliph : v_gP)
-        {
-            //v_gP.removeFirst();
-            delete gliph;
-        }
-    }
+    bool deletePerson(Glif_Person* person);
+    /**
+     * @brief addTree добавление дерева к текущему дереву
+     * @param person - глиф, начиная с которого будет добавлено дерево
+     * @param tree - указатель на добавляемое дерево
+     * @return
+     */
+    void addTree(Glif_Person* person, genus_tree* tree);
+    genus_tree* removeTree(Glif_Person* person);
+    ~genus_tree();
 
 
 };
