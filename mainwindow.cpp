@@ -31,7 +31,6 @@ void MainWindow::slotCustomMenuRequested(const QPoint pos)
     m_pos = pos;
     //Устанавливаю контекстное меню относительно позиции курсора
     menu.popup(ui->graphicsView->viewport()->mapToGlobal(pos));
-
     Glif_Person* element = dynamic_cast<Glif_Person*> (ui->graphicsView->itemAt(pos));
 
     m_element = element;
@@ -40,10 +39,15 @@ void MainWindow::slotCustomMenuRequested(const QPoint pos)
         if( m_f_connectionEnabled == true)
         {
             QAction* addConnection = menu.addAction("Добавить связь");
-            QAction* deleteConnection = menu.addAction("Удалить связь");
+            //Есть ли у отца такой ребенок
+            if( m_el_father->m_id_son.indexOf(m_el_son->m_id) >= 0)
+            {
+                QAction* deleteConnection = menu.addAction("Удалить связь");
+                connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
+            }
             menu.addSeparator();
             connect(addConnection, SIGNAL(triggered()), this, SLOT(addConnection()));
-            connect(deleteConnection, SIGNAL(triggered()), this, SLOT(deleteConnection()));
+
         }
         QAction* addPerson = menu.addAction("Добавить отца");
         connect(addPerson, SIGNAL(triggered()), this, SLOT(addPerson()));
@@ -102,6 +106,21 @@ void MainWindow::deleteConnection()
     m_el_son->setNormal();
     redraw(m_el_father);
     redraw(m_el_son);
+
+    //удаляю визуальную связь
+    for (linesBetweenItems* tmp : m_listLine)
+    {
+        if(tmp->m_son == m_el_son && tmp->m_father == m_el_father)
+        {
+           m_listLine.removeOne(tmp);
+           delete tmp;
+        }
+    }
+    //Удаляю внутреннюю свзяь
+    m_el_son->m_id_father = 0;
+    m_el_father->m_id_son.removeOne(m_el_son->m_id);
+    //создаю еще одно дерево
+
     m_f_connectionEnabled = false;
     m_el_father = nullptr;
     m_el_son = nullptr;
@@ -334,6 +353,22 @@ void MainWindow::openCSV()
 {
     QString nameFile = QFileDialog::getOpenFileName(this, tr("Открыть файл"), QDir::currentPath(), tr("Файл csv (*.csv)"));
     if(nameFile.size() != 0) {
+
+        //очистка предыдущего
+        //удаляю визуальную связь
+        for (linesBetweenItems* tmp : m_listLine)
+        {
+
+            m_listLine.removeOne(tmp);
+            delete tmp;
+
+        }
+        for( genus_tree* tree : tree_list)
+        {
+            tree_list.removeFirst();
+            delete tree;
+        }
+        m_id_count = 1;
 
         QGraphicsScene* scena = ui->graphicsView->scene();
         QFile file (nameFile);

@@ -136,6 +136,15 @@ public:
         return  false;
     }
 
+    ~genus_tree()
+    {
+        for(Glif_Person* gliph : v_gP)
+        {
+            //v_gP.removeFirst();
+            delete gliph;
+        }
+    }
+
 
 };
 

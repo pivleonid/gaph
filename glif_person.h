@@ -145,7 +145,9 @@ public:
     {
       painter->setPen(Qt::black);
       painter->setBrush(Qt::GlobalColor::black);
+
       //Левая и правая координата
+      painter->setPen(QPen(Qt::darkRed, 5, Qt::DashDotLine));
       QPointF point(0, m_son->m_radius);
       QLineF line(m_father->scenePos() +  point, m_son->scenePos() - point);
       painter->drawLine(line);
