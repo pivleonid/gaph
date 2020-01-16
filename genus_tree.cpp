@@ -7,7 +7,7 @@ void genus_tree::addFather(Glif_Person* gp)
 }
 Glif_Person* genus_tree::getFather()
 {
-   return this->getPerson(0);
+   return v_gP.at(0);
 }
 
 bool genus_tree::addPerson(Glif_Person* gp)
@@ -102,19 +102,35 @@ void genus_tree::addTree(Glif_Person* person, genus_tree* tree)
 {
     Glif_Person* person_copy = tree->getFather();
     person->m_id_son.append(person_copy->m_id);
+    person_copy->m_id_father = person->m_id;
     all_id.append(person_copy->m_id);
     v_gP.append(person_copy);
 
-    QVector<int> index_sons;
-    index_sons.append(person_copy->m_id_son);
-    while( index_sons.isEmpty() == false)
+    QVector<int> childrens;
+    QVector<int> childrens_temp;
+    childrens = person_copy->m_id_son;
+
+    while( childrens.isEmpty() == false)
     {
-        for(int index_son : person_copy->m_id_son)
+        for( int i : childrens )
         {
-            Glif_Person* son = tree->getPerson(index_son);
-            index_sons.append(son->m_id_son);
+            Glif_Person* son = tree->getPerson(i);
+            if( son == nullptr)
+            {
+                qDebug() << "Wtf?";
+                return;
+            }
+            childrens_temp.append(son->m_id_son);
+            //
+            this->addPerson(son);
+            childrens.pop_back();
         }
+        childrens.append(childrens_temp);
+        childrens_temp.clear();
     }
+
+    tree->v_gP.clear();
+    tree->all_id.clear();
 
 }
 

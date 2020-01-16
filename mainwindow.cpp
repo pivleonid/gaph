@@ -96,8 +96,38 @@ void MainWindow::addConnection()
     redraw(m_el_father);
     redraw(m_el_son);
 
+    linesBetweenItems* line = new linesBetweenItems(m_el_father, m_el_son);
+    m_listLine.append(line);
+    ui->graphicsView->scene()->addItem(line);
+
+    genus_tree* genus = nullptr;
+    genus_tree* genus_copy = nullptr;
+    for( auto tree : tree_list)
+    {
+        if( tree->foundId(m_el_father->m_id) == true )
+            genus = tree;
+        if( tree->foundId(m_el_son->m_id) == true )
+            genus_copy = tree;
+    }
+    //обработка ошибок
+    if( genus == nullptr )
+    {
+        qDebug() << "genus == nullptr";
+        return;
+    }
+    if( genus_copy == nullptr )
+    {
+        qDebug() << "genus_copy == nullptr";
+        return;
+    }
+    if( genus == genus_copy )
+    {
+        qDebug() << "genus == genus_copy";
+        return;
+    }
 
 
+    genus->addTree(m_el_father, genus_copy);
     m_f_connectionEnabled = false;
     m_el_father = nullptr;
     m_el_son = nullptr;
@@ -509,7 +539,10 @@ void MainWindow::openCSV()
                     {
                         Glif_Person* son = node_tree->getPerson(i);
                         if( son == nullptr)
-                            qDebug() << "Wtf?";
+                        {
+                            qDebug() << "Не верный формат входных данных.";
+                            return;
+                        }
                         childrens_temp.append(son->m_id_son);
                         scena->addItem(son);
                         son->setPos(x, y);
