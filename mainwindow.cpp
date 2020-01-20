@@ -158,7 +158,45 @@ void MainWindow::deleteConnection()
     m_el_son->m_id_father = 0;
     m_el_father->m_id_son.removeOne(m_el_son->m_id);
     //создаю еще одно дерево
+    genus_tree* oldTree = getTree(m_el_father);
+    genus_tree* newTree = new genus_tree();
+    //
+    newTree->addFather(m_el_son);
 
+
+    QVector<int> childrens;
+    QVector<int> childrens_temp;
+    childrens = m_el_son->m_id_son;
+
+    //удаляю объект m_el_son  из дерева
+    oldTree->v_gP.removeAt(oldTree->v_gP.indexOf(m_el_son));
+    oldTree->all_id.removeAt(oldTree->all_id.indexOf(m_el_son->m_id));
+
+    while( childrens.isEmpty() == false)
+    {
+        for( int i : childrens )
+        {
+            Glif_Person* son = oldTree->getPerson(i);
+            if( son == nullptr)
+            {
+                qDebug() << "delete connections - Wtf?";
+                return;
+            }
+            childrens_temp.append(son->m_id_son);
+            //
+            oldTree->v_gP.removeAt(oldTree->v_gP.indexOf(son));
+            oldTree->all_id.removeAt(oldTree->all_id.indexOf(son->m_id));
+            //
+            newTree->addPerson(son);
+            childrens.pop_back();
+        }
+        childrens.append(childrens_temp);
+        childrens_temp.clear();
+    }
+
+    //
+    tree_list.insert(tree_list.indexOf(oldTree), newTree);
+    //
     m_f_connectionEnabled = false;
     m_el_father = nullptr;
     m_el_son = nullptr;
@@ -540,7 +578,7 @@ void MainWindow::openCSV()
                         Glif_Person* son = node_tree->getPerson(i);
                         if( son == nullptr)
                         {
-                            qDebug() << "Не верный формат входных данных.";
+                            qDebug() << "Не верный формат входных данных. Ошибка открытия";
                             return;
                         }
                         childrens_temp.append(son->m_id_son);

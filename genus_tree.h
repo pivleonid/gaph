@@ -48,7 +48,7 @@ public:
     Glif_Person* getPerson(int id);
     /**
      * @brief foundId
-     * @param id
+     * @param id - уникальный идентификатор предка
      * @return возвращает указатель на глиф в дереве
      */
     bool foundId(int id);
